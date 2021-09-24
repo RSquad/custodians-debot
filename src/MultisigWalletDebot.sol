@@ -224,6 +224,7 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
         }
     }
     function confirmUpdate3_1(uint32 index) public {
+        _printArrayPubkeys(_updateParams.owners);
         index;
         uint[] none;
         SigningBoxInput.get(tvm.functionId(setKeyHandle), "", none);
@@ -283,6 +284,7 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
         }
     }
     function executeUpdate3_1(uint32 index) public {
+        _printArrayPubkeys(_updateParams.owners);
         index;
         uint[] none;
         SigningBoxInput.get(tvm.functionId(setKeyHandle), "", none);
@@ -351,7 +353,7 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
     }
     function enterReqConfirms(uint32 index) public {
         index;
-        AmountInput.get(tvm.functionId(setReqConfirms), "How many confirms?", 0, 1, 32);
+        AmountInput.get(tvm.functionId(setReqConfirms), "How many confirmations will be required for transaction?", 0, 1, 32);
     }
     function setCustodian(string value) public {
         (uint256 pubKey, ) = stoi("0x" + value);
@@ -395,6 +397,7 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
         }
     }
     function submitUpdate3_1(uint32 index) public {
+        _printArrayPubkeys(_updateParams.owners);
         index;
         uint[] none;
         SigningBoxInput.get(tvm.functionId(setKeyHandle), "", none);
