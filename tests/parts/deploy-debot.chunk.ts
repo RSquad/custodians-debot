@@ -22,7 +22,7 @@ export default async (
     await sendThroughMultisig({
         smcSafeMultisigWallet,
         dest: smcMultisigWalletDebot.address,
-        value: 10_000_000_000,
+        value: 2_000_000_000,
     });
     await smcMultisigWalletDebot.deploy();
 

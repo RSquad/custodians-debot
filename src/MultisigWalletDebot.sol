@@ -58,6 +58,8 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
     uint8 _requiredVotes;
     UpdateRequest _currentUpdate;
 
+    bool _exist;
+
 /* -------------------------------------------------------------------------- */
 /*                              ANCHOR Uploadres                              */
 /* -------------------------------------------------------------------------- */
@@ -87,7 +89,7 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
         key = "";
         author = "TON Surf";
         support = address.makeAddrStd(0, 0x606545c3b681489f2c217782e2da2399b0aed8640ccbcf9884f75648304dbc77);
-        hello = "Hello, I’m Multisig Debot";
+        hello = "Hello, I’m Multisig Debot.";
         language = "en";
         dabi = m_debotAbi.get();
         icon = "";
@@ -112,11 +114,12 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
     function mainMenuIndex(uint32 index) public { index;
         UserInfo.getPublicKey(tvm.functionId(setDefaultPubkey));
         delete _updateParams;
+        _exist = true;
 
         if (_targetWallet == address(0)) {
             MenuItem[] items;
-            items.push(MenuItem("Enter target wallet address", "", tvm.functionId(enterTargetWalletAddress)));
-            Menu.select("What can I do for you?", "", items);
+            items.push(MenuItem("Target address", "", tvm.functionId(enterTargetWalletAddress)));
+            Menu.select("Please, enter target wallet address", "", items);
         } else {
             delete _currentUpdate;
             getCustodians(0);
@@ -127,11 +130,14 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
     }
     function manageMenu() public {
         MenuItem[] items;
-        items.push(MenuItem("Show custodians", "", tvm.functionId(showWalletInfo)));
-        if(_updates.length > 0) {
-            items.push(MenuItem("Sign active submissions", "", tvm.functionId(showSubmissions)));
+        if(_exist) {
+            items.push(MenuItem("Show custodians", "", tvm.functionId(showWalletInfo)));
+            if(_updates.length > 0) {
+                items.push(MenuItem("Sign active submissions", "", tvm.functionId(showSubmissions)));
+            }
+            items.push(MenuItem("Update custodians", "", tvm.functionId(createSubmissoin)));
         }
-        items.push(MenuItem("Update custodians", "", tvm.functionId(createSubmissoin)));
+        items.push(MenuItem("Change target wallet", "", tvm.functionId(enterTargetWalletAddress)));
         Menu.select("What can I do for you?", "", items);
     }
 
@@ -444,7 +450,7 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
             abiVer: 2,
             extMsg: true,
             callbackId: tvm.functionId(setUpdateRequests),
-            onErrorId: tvm.functionId(onError),
+            onErrorId: tvm.functionId(onErrorWrongSmc),
             time: 0,
             expire: 0,
             sign: false,
@@ -465,7 +471,7 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
             abiVer: 2,
             extMsg: true,
             callbackId: tvm.functionId(setCustodians),
-            onErrorId: tvm.functionId(onError),
+            onErrorId: tvm.functionId(onErrorWrongSmc),
             time: 0,
             expire: 0,
             sign: false,
@@ -488,7 +494,7 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
             abiVer: 2,
             extMsg: true,
             callbackId: tvm.functionId(setParameters),
-            onErrorId: tvm.functionId(onError),
+            onErrorId: tvm.functionId(onErrorWrongSmc),
             time: 0,
             expire: 0,
             sign: false,
@@ -582,6 +588,14 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
     function onError(uint32 sdkError, uint32 exitCode) public {
         Terminal.print(0, format("Sdk error {}. Exit code {}.", sdkError, exitCode));
         mainMenu();
+    }
+
+    function onErrorWrongSmc(uint32 sdkError, uint32 exitCode) public {
+        if(_exist) {
+            Terminal.print(0, format("Unfortunately, this type of wallet is not yet supported. Sdk error {}. Exit code {}.", sdkError, exitCode));
+            delete _targetWallet;
+            _exist = false;
+        }
     }
 
     function onCodeUpgrade() internal override {
