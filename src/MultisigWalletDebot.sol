@@ -246,9 +246,9 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
     }
     function confirmUpdate3_2(uint32 index) public {
         index;
-        Terminal.print(0, format("tonos-cli -u https://main.ton.dev call {} confirmUpdate \'{\"updateId\":\"{}\"}\' --abi ./SafeMultisigWallet.abi.json --sign \"{your seed phrase}\"", _targetWallet, _currentUpdate.id));
+        Terminal.print(0, format("tonos-cli -u https://main.ton.dev call {} confirmUpdate \'{\"updateId\":\"{}\"}\' --abi ./SetcodeMultisigWallet.abi.json --sign \"{your seed phrase}\"", _targetWallet, _currentUpdate.id));
         Terminal.print(0, "Link to download .abi and .tvc:");
-        Terminal.print(0, "(https://github.com/tonlabs/ton-labs-contracts/tree/master/solidity/safemultisig)");
+        Terminal.print(0, "(https://github.com/tonlabs/ton-labs-contracts/tree/master/solidity/setcodemultisig)");
         mainMenu();
     }
     function confirmUpdate4(uint32 index) public view {
@@ -306,9 +306,9 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
     }
     function executeUpdate3_2(uint32 index) public {
         index;
-        Terminal.print(0, format("tonos-cli -u https://main.ton.dev call {} executeUpdate \'{\"updateId\":\"{}\",\"code\":\"{.tvc}\"}\' --abi ./SafeMultisigWallet.abi.json --sign \"{your seed phrase}\"", _targetWallet, _currentUpdate.id));
+        Terminal.print(0, format("tonos-cli -u https://main.ton.dev call {} executeUpdate \'{\"updateId\":\"{}\",\"code\":\"{.tvc}\"}\' --abi ./SetcodeMultisigWallet.abi.json --sign \"{your seed phrase}\"", _targetWallet, _currentUpdate.id));
         Terminal.print(0, "Link to download .abi and .tvc:");
-        Terminal.print(0, "(https://github.com/tonlabs/ton-labs-contracts/tree/master/solidity/safemultisig)");
+        Terminal.print(0, "(https://github.com/tonlabs/ton-labs-contracts/tree/master/solidity/setcodemultisig)");
         mainMenu();
     }
     function executeUpdate4(uint32 index) public view {
@@ -419,9 +419,9 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
     }
     function submitUpdate3_2(uint32 index) public {
         index;
-        Terminal.print(0, format("tonos-cli -u https://main.ton.dev call {} submitUpdate \'{\"codeHash\":{},\"owners\":\"{array of pubkeys}\"},\"reqConfirms\":{amount}}\' --abi ./SafeMultisigWallet.abi.json --sign \"{your seed phrase}\"", _targetWallet, _updateParams.codeHash));
+        Terminal.print(0, format("tonos-cli -u https://main.ton.dev call {} submitUpdate \'{\"codeHash\":{},\"owners\":\"{array of pubkeys}\"},\"reqConfirms\":{amount}}\' --abi ./SetcodeMultisigWallet.abi.json --sign \"{your seed phrase}\"", _targetWallet, _updateParams.codeHash));
         Terminal.print(0, "Link to download .abi and .tvc:");
-        Terminal.print(0, "(https://github.com/tonlabs/ton-labs-contracts/tree/master/solidity/safemultisig)");
+        Terminal.print(0, "(https://github.com/tonlabs/ton-labs-contracts/tree/master/solidity/setcodemultisig)");
         mainMenu();
     }
     function submitUpdate4(uint32 index) public view {
