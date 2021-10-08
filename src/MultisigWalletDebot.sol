@@ -52,8 +52,10 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
     CustodianInfo[] _custodians;
     WalletParams _walletParams;
 
-    uint256 _codeHash;
     TvmCell _walletCode;
+    uint256 _codeHash;
+    TvmCell _walletCodeSurf;
+    uint256 _codeHashSurf;
 
     uint8 _requiredVotes;
     UpdateRequest _currentUpdate;
@@ -64,10 +66,16 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
 /*                              ANCHOR Uploadres                              */
 /* -------------------------------------------------------------------------- */
 
-    function setNewCode(TvmCell code) public  {
+    function setCodeWallet(TvmCell code) public  {
         tvm.accept();
         _walletCode = code;
         _codeHash = tvm.hash(code);
+    }
+
+    function setCodeWalletSurf(TvmCell code) public  {
+        tvm.accept();
+        _walletCodeSurf = code;
+        _codeHashSurf = tvm.hash(code);
     }
 
 /* -------------------------------------------------------------------------- */
@@ -215,7 +223,7 @@ contract MultisigWalletDebot is Debot, Upgradable, IStructs {
 
     function confirmUpdate(uint32 index) public { index;
         _printArrayPubkeys(_currentUpdate.custodians);
-        if(_codeHash == _currentUpdate.codeHash) {
+        if(_codeHash == _currentUpdate.codeHash || _codeHashSurf == _currentUpdate.codeHash) {
             ConfirmInput.get(tvm.functionId(confirmUpdate3), "Agree?");
         } else {
             Terminal.print(0, 'The wallet code is different from the one offered. This debot is not intended for such actions. You should find another way to confirm this submission.');

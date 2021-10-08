@@ -1,6 +1,7 @@
 import { TonClient } from "@tonclient/core";
 import pkgMultisigWalletDebot from "../../ton-packages/MultisigWalletDebot.package";
 import pkgWallet from "../../ton-packages/SetcodeMultisigWallet.package";
+import pkgWalletSurf from "../../ton-packages/SurfMultisigWallet.package";
 import { NETWORK_MAP } from "../../utils/client";
 import { sendThroughMultisig } from "../../utils/net";
 import TonContract from "../../utils/ton-contract";
@@ -11,6 +12,13 @@ export default async (
     smcSafeMultisigWallet: TonContract
 ) => {
     const keys = await client.crypto.generate_random_sign_keys();
+
+    if (process.env.NETWORK === "MAINNET") {
+        fs.writeFileSync("./mainnet-debot-keys.json", JSON.stringify(keys));
+    } else {
+        fs.writeFileSync("./debot-keys.json", JSON.stringify(keys));
+    }
+
     const smcMultisigWalletDebot = new TonContract({
         client,
         name: "MultisigWalletDebot",
@@ -50,10 +58,19 @@ export default async (
     });
 
     await smcMultisigWalletDebot.call({
-        functionName: "setNewCode",
+        functionName: "setCodeWallet",
         input: {
             code: (
                 await client.boc.get_code_from_tvc({ tvc: pkgWallet.image })
+            ).code,
+        },
+    });
+
+    await smcMultisigWalletDebot.call({
+        functionName: "setCodeWalletSurf",
+        input: {
+            code: (
+                await client.boc.get_code_from_tvc({ tvc: pkgWalletSurf.image })
             ).code,
         },
     });
